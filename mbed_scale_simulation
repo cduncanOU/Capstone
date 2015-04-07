@@ -1,0 +1,74 @@
+/* This allows the mbed to simulate output given by the cattle scale for testing purposes.
+Written by Cooper Duncan */
+
+#include "mbed.h"
+
+DigitalOut txOklahoma(LED1); //Oklahoma Transmit LED
+DigitalOut txTexas(LED2); //Texas Transmit LED
+DigitalIn  oklahoma(p5); //Oklahoma button
+DigitalIn  texas(p8); //Texas button
+Serial     uart(p28, p27); //tx rx
+Serial     pc(USBTX, USBRX); // For debugging
+
+const char a = 0x61; // Character that preceeds weight registered on scale
+const char b = 0x62; // Preceeds number of head and average weight
+const char lf = 0xA;
+
+/* Displays the following when OK button pressed:
+
+a
+1200
+
+*/
+void writeOK() {
+    uart.putc(a);
+    uart.putc(lf);
+    uart.putc('1');
+    uart.putc('2');
+    uart.putc('0');
+    uart.putc('0');
+    uart.putc(lf);
+}
+
+/* Displays the following when TX button pressed:
+
+a
+1200
+b
+2
+600
+
+*/
+void writeTX() {
+    writeOK();
+    uart.putc(b);
+    uart.putc(lf);
+    uart.putc('2');
+    uart.putc(lf);
+    uart.putc('6');
+    uart.putc('0');
+    uart.putc('0');
+    uart.putc(lf);
+}
+
+int main() {
+    uart.baud(9600);
+    while(1) {
+        if (oklahoma.read()) {
+            txOklahoma = 1; // Turn on OK transmit light
+            writeOK();
+            wait(.2);
+            txOklahoma = 0; // Light off
+            while (oklahoma.read()) {}
+        } else if (texas.read()) {
+            txTexas = 1; // Turn on TX transmit light
+            writeTX();
+            txTexas = 0; // Light off
+            while (texas.read()) {}
+        }
+        // For debugging purposes
+        if (uart.readable()) {
+            pc.putc(uart.getc());
+        }
+    }
+}
