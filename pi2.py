@@ -28,9 +28,8 @@ def main():
 	uart = serial.Serial("/dev/ttyAMA0", baudrate=BAUD_RATE, timeout=TIMEOUT)
 	uart.open()
 	
-	b_Oklahoma = check_mode()
+	b_Oklahoma = True
 	update_display(b_Oklahoma, weight, head, avg)
-	uart.write(transfer_string(b_Oklahoma, weight_prev, head_prev, avg_prev))
 	
 	while True:			
 		input = uart.readline()
@@ -46,6 +45,7 @@ def main():
 				head = int(input)
 				input = uart.readline()
 				avg = float(input)
+				update_display(b_Oklahoma, weight, head, avg)
 				
 	return
 		
