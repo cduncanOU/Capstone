@@ -13,41 +13,63 @@ Serial     pc(USBTX, USBRX); // For debugging
 const char a = 0x61; // Character that preceeds weight registered on scale
 const char b = 0x62; // Preceeds number of head and average weight
 const char lf = 0xA;
+const char cr = 0xD;
 
 /* Displays the following when OK button pressed:
 
-a
-1200
-
+a\r\n
+    1200\r\n
+** Allows 8 characters for each number
 */
 void writeOK() {
     uart.putc(a);
+    uart.putc(cr);
     uart.putc(lf);
+    uart.putc(' ');
+    uart.putc(' ');
+    uart.putc(' ');
+    uart.putc(' ');
     uart.putc('1');
     uart.putc('2');
     uart.putc('0');
     uart.putc('0');
+    uart.putc(cr);
     uart.putc(lf);
 }
 
 /* Displays the following when TX button pressed:
 
-a
-1200
-b
-2
-600
+a\r\n
+    1200\r\n
+b\r\n
+       2\r\n
+     600\r\n
 
 */
 void writeTX() {
     writeOK();
     uart.putc(b);
+    uart.putc(cr);
     uart.putc(lf);
+    uart.putc(' ');
+    uart.putc(' ');
+    uart.putc(' ');
+    uart.putc(' ');
+    uart.putc(' ');
+    uart.putc(' ');
+    uart.putc(' ');
     uart.putc('2');
+    uart.putc(cr);
     uart.putc(lf);
+    uart.putc(' ');
+    uart.putc(' ');
+    uart.putc(' ');
+    uart.putc(' ');
+    uart.putc(' ');
     uart.putc('6');
     uart.putc('0');
     uart.putc('0');
+    uart.putc(cr);
     uart.putc(lf);
 }
 
